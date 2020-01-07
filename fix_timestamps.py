@@ -11,7 +11,7 @@ import qtreewalk
 
 
 def do_per_file(ent, d, out_file=None, rc=None):
-    msg = "%s mtime is %s, setting ctime/btime to match" % (d + ent['name'], ent['modification_time'])
+    msg = "%s mtime is %s, setting ctime/btime to match" % (d['path'] + ent['name'], ent['modification_time'])
     qtreewalk.log(msg)
     target_time = ent['modification_time']
     rc.fs.set_file_attr(path=ent['path'], creation_time=target_time, change_time=target_time)
