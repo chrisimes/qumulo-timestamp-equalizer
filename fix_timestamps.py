@@ -83,8 +83,7 @@ def list_dir(rc, d, out_file):
              'symlink_target_type': 'FS_FILE_TYPE_UNKNOWN',
              'type': 'FS_FILE_TYPE_FILE'
             """
-            # you might set some sort of conditional filter here.
-            # you might even run an api command to set permissions here.
+            # Log verbosely and set ctime/btime to match mtime
             log("%s mtime is %s, setting ctime/btime to match" % (ent['name'], ent['modification_time']))
             target_time = ent['modification_time']
             rc.fs.set_file_attr(path=ent['path'], creation_time=target_time, change_time=target_time)
