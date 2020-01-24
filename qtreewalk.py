@@ -21,6 +21,8 @@ class Gvars:
         self.the_queue_len = multiprocessing.Value('i', 0)
         self.done_queue_len = multiprocessing.Value('i', 0)
 
+args = None
+
 
 def log(msg):
     t = datetime.datetime.utcnow()
@@ -50,6 +52,8 @@ def list_dir(rc, d, out_file=None):
         for ent in r["files"]:
             with gvars.done_queue_len.get_lock():
                 gvars.done_queue_len.value += 1
+            if args.l:
+                out_file.write("%s\t%s\t%s\t%s\n" % (d["path"], ent["name"], ent["size"], ent["type"]))
             # This is the call that gets run against each file and directory
             do_per_file(ent, d, out_file, rc)
             if ent["type"] == "FS_FILE_TYPE_DIRECTORY" and int(ent["child_count"]) > 0:
@@ -115,6 +119,8 @@ def parse_args():
     parser.add_argument('-s', required=True, help='Qumulo cluster ip/hostname')
     parser.add_argument('-p', required=True, help='Qumulo api *admin* password')
     parser.add_argument('-d', required=False, help='Starting directory', default='/')
+    parser.add_argument('-l', required=False, help='Log all files', action='store_true')
+    global args
     args = parser.parse_args()
     return args
 
