@@ -10,6 +10,7 @@ if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding('utf8')
 from qumulo.rest_client import RestClient
+from qumulo.lib.request import RequestError
 
 
 class Gvars:
@@ -43,7 +44,11 @@ def list_dir(rc, d, out_file=None):
         if next_page == "first":
             try:
                 r = rc.fs.read_directory(path=d["path"], page_size=1000)
-            except:
+            except RequestError, e:
+                # Need to catch login timeouts
+                if "Need to log in first to establish credentials." in str(e):
+                    rc.login('admin', args.p)
+                    r = rc.fs.read_directory(path=d["path"], page_size=1000)
                 log("Error reading directory: %s" % d["path"])
                 next
         else:
@@ -71,11 +76,15 @@ def worker_main():
     proc = multiprocessing.current_process()
     rc = RestClient(gvars.QHOST, 8000)
     rc.login(gvars.QUSER, gvars.QPASS)
-    out_file = open("out-%s.txt" % proc.pid, "w")
+    if args.l:
+        out_file = open("out-%s.txt" % proc.pid, "w")
+    else:
+        out_file = None
     while True:
         item = gvars.the_queue.get(True)
         list_dir(rc, item, out_file)
-        out_file.flush()
+        if args.l:
+            out_file.flush()
         with gvars.the_queue_len.get_lock():
             gvars.the_queue_len.value -= 1
 
@@ -102,15 +111,17 @@ def walk_tree(QHOST, QUSER, QPASS, start_path):
         time.sleep(0.1)
     the_pool.terminate()
     log("Processed %s entries." % gvars.done_queue_len.value)
-    log("Done with tree walk. Combining results")
-    fw = open("file-list.txt", "w")
-    for f in glob.glob('out-*.txt'):
-        fr = open(f, "r")
-        fw.write(fr.read())
-        fr.close()
-        os.remove(f)
+    log("Done with tree walk.")
+    if args.l:
+        log("Combining results.")
+        fw = open("file-list.txt", "w")
+        for f in glob.glob('out-*.txt'):
+            fr = open(f, "r")
+            fw.write(fr.read())
+            fr.close()
+            os.remove(f)
+        log("Results save to file: file-list.txt")
     del gvars
-    log("Results save to file: file-list.txt")
 
 
 def parse_args():
