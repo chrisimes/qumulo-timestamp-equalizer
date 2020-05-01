@@ -8,7 +8,7 @@ The majority of this is copied from the treewalk script at
 https://github.com/Qumulo/power-tools/blob/master/api-tree-walk.py
 
 ## Requirements
-* python 2.7
+* python 2.7.15 or later.  NOTE: Python 3 is not supported.
 * appropriate Qumulo API library `pip install qumulo-api`
 
 ## Usage
