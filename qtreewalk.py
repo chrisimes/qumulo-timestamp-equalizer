@@ -47,7 +47,7 @@ def list_dir(rc, d, out_file=None):
             except RequestError, e:
                 # Need to catch login timeouts
                 if "Need to log in first to establish credentials." in str(e):
-                    rc.login('admin', args.p)
+                    rc.login('equalizer', args.p)
                     r = rc.fs.read_directory(path=d["path"], page_size=1000)
                 log("Error reading directory: %s" % d["path"])
                 next
@@ -128,7 +128,7 @@ def parse_args():
     usage_msg = "\nExample: python api-tree-walk.py -s qumulo -p password123 -d /home/\nSpecify -h for list of arguments."
     parser = argparse.ArgumentParser(description='Recursive parallel tree walk with Qumulo API', usage=usage_msg)
     parser.add_argument('-s', required=True, help='Qumulo cluster ip/hostname')
-    parser.add_argument('-p', required=True, help='Qumulo api *admin* password')
+    parser.add_argument('-p', required=True, help='Qumulo api *equalizer* password')
     parser.add_argument('-d', required=False, help='Starting directory', default='/')
     parser.add_argument('-l', required=False, help='Log all files', action='store_true')
     global args
