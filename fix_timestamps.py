@@ -21,7 +21,7 @@ def do_per_file(ent, d, out_file=None, rc=None):
     except RequestError, e:
         # This is likely to be a credentials timeout, make sure
         if "Need to log in first to establish credentials." in str(e):
-            rc.login('admin', args.p)
+            rc.login('equalizer', args.p)
             rc.fs.set_file_attr(path=ent['path'],
                                 creation_time=target_time,
                                 change_time=target_time)
@@ -32,4 +32,4 @@ qtreewalk.do_per_file = do_per_file
 
 if __name__ == '__main__':
     args = qtreewalk.parse_args()
-    qtreewalk.walk_tree(args.s, 'admin', args.p, args.d)
+    qtreewalk.walk_tree(args.s, 'equalizer', args.p, args.d)
