@@ -13,6 +13,7 @@ https://github.com/Qumulo/power-tools/blob/master/api-tree-walk.py
 
 ## Usage
 1. Make sure you have the python requirements: `pip install -r requirements.txt`
-2. `python fix_timestamps.py -s qumulo -p ********* -d /home`
+2. Create a user: "equalizer" and assign to Data-Administrators role
+3. `python fix_timestamps.py -s qumulo -p ********* -d /home`
 
 
